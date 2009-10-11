@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <title>Twitter Bot on GAE/J and Wicket</title>
+    </head>
+    <body>
+        <strong>Twitter Bot on GAE/J and Wicket</strong>
+        <br/><br/>
+        <a href="#" wicket:id="logout">logout</a>
+        
+        <div style="color: red;" wicket:id="feedback">feedback</div>
+        
+        <ul wicket:id="container">
+        	<li wicket:id="list">
+        		ID: <span wicket:id="key">id</span>
+        		Message: <span wicket:id="message">message</span>
+        	</li>
+        </ul>
+        
+        <form wicket:id="message">
+        	<input type="text" wicket:id="message" />
+        	<input type="submit" value="追加" wicket:id="submit" />
+        </form>
+    </body>
+</html>
+
