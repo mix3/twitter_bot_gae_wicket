@@ -1,5 +1,6 @@
 package org.mix3.twitter_bot_gae_wicket.page;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.PageParameters;
@@ -11,10 +12,14 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.link.ExternalLink;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.mix3.twitter_bot_gae_wicket.model.MessageModel;
 import org.mix3.twitter_bot_gae_wicket.service.Service;
@@ -43,9 +48,27 @@ public class MessageManage extends MyAbstractWebPage{
 		final WebMarkupContainer container = new WebMarkupContainer("container");
 		add(container.setOutputMarkupId(true));
 		
-		container.add(new ListView<MessageModel>("list", list){
+		IDataProvider<MessageModel> provider = new IDataProvider<MessageModel>(){
 			@Override
-			protected void populateItem(final ListItem<MessageModel> item) {
+			public Iterator<? extends MessageModel> iterator(int first, int count) {
+				return service.get(first, count).iterator();
+			}
+			@Override
+			public IModel<MessageModel> model(MessageModel messageModel) {
+				return new Model<MessageModel>(messageModel);
+			}
+			@Override
+			public int size() {
+				return service.count();
+			}
+			@Override
+			public void detach() {
+			}
+		};
+		
+		DataView<MessageModel> view = new DataView<MessageModel>("list", provider, 10){
+			@Override
+			protected void populateItem(final Item<MessageModel> item) {
 				item.setDefaultModel(new CompoundPropertyModel<MessageModel>(item.getModelObject()));
 				item.add(new Label("key"));
 				item.add(new AjaxEditableLabel<String>("message"){
@@ -65,8 +88,33 @@ public class MessageManage extends MyAbstractWebPage{
 					}
 				});
 			}
-		});
-		
+		};
+		container.add(view);
+		container.add(new PagingNavigator("paging", view));
+//		container.add(new ListView<MessageModel>("list", list){
+//			@Override
+//			protected void populateItem(final ListItem<MessageModel> item) {
+//				item.setDefaultModel(new CompoundPropertyModel<MessageModel>(item.getModelObject()));
+//				item.add(new Label("key"));
+//				item.add(new AjaxEditableLabel<String>("message"){
+//					@Override
+//					protected void onSubmit(AjaxRequestTarget target) {
+//						super.onSubmit(target);
+//						try {
+//							service.update(item.getModelObject());
+//							list.clear();
+//							list.addAll(service.getAll());
+//							target.addComponent(container);
+//							target.addComponent(feedback);
+//						} catch (EntityNotFoundException e) {
+//							error("DB Error!");
+//							target.addComponent(feedback);
+//						}
+//					}
+//				});
+//			}
+//		});
+//		
 		Form<MessageModel> form = new Form<MessageModel>("message");
 		add(form.setOutputMarkupId(true));
 		form.add(new RequiredTextField<String>("message", new PropertyModel<String>(input, "message")));

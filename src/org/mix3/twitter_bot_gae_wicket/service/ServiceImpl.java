@@ -38,7 +38,8 @@ public class ServiceImpl implements Service{
 		}
 		return list;
 	}
-
+	
+	
 	@Override
 	public void put(MessageModel messageModel) {
 		Transaction transaction = datastoreService.beginTransaction();
@@ -81,5 +82,23 @@ public class ServiceImpl implements Service{
 			Entity entity = entities.get(0);
 			twitter.updateStatus((String)entity.getProperty("message"));
 		}
+	}
+
+	@Override
+	public int count() {
+		return datastoreService.prepare(new Query("message")).countEntities();
+	}
+
+	@Override
+	public List<MessageModel> get(int offset, int limit) {
+		if(limit == 0){
+			limit = 1;
+		}
+		List<MessageModel> list = new ArrayList<MessageModel>();
+		List<Entity> entitys = datastoreService.prepare(new Query("message").addSort(Entity.KEY_RESERVED_PROPERTY, Query.SortDirection.DESCENDING)).asList(withOffset(offset).limit(limit));
+		for(Entity e : entitys){
+			list.add(new MessageModel(e.getKey(), (String)e.getProperty("message")));
+		}
+		return list;
 	}
 }

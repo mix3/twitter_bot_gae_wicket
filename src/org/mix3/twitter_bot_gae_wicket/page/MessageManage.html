@@ -9,17 +9,17 @@
         
         <div style="color: red;" wicket:id="feedback">feedback</div>
         
+         <form wicket:id="message">
+        	<input type="text" wicket:id="message" />
+        	<input type="submit" value="追加" wicket:id="submit" />
+        </form>
         <ul wicket:id="container">
         	<li wicket:id="list">
         		ID: <span wicket:id="key">id</span>
         		Message: <span wicket:id="message">message</span>
         	</li>
+        	<div wicket:id="paging">paging</div>
         </ul>
-        
-        <form wicket:id="message">
-        	<input type="text" wicket:id="message" />
-        	<input type="submit" value="追加" wicket:id="submit" />
-        </form>
     </body>
 </html>
 

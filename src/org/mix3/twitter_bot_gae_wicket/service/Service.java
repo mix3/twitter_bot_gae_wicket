@@ -12,6 +12,8 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(ServiceImpl.class)
 public interface Service{
 	public List<MessageModel> getAll();
+	public List<MessageModel> get(int offset, int limit);
+	public int count();
 	public void put(MessageModel messageModel);
 	public void update(MessageModel messageModel) throws EntityNotFoundException;
 	public void post() throws TwitterException;
